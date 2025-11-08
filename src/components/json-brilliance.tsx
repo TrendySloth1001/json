@@ -92,12 +92,18 @@ export function JsonBrilliance() {
       return;
     }
     setIsSchemaLoading(true);
+    setSuggestedSchema('');
     try {
       const result = await suggestJSONSchema({ jsonString: rawJson });
       setSuggestedSchema(result.suggestedSchema);
       setActiveTab('schema');
     } catch (e: any) {
       setError(e.message);
+       toast({
+        variant: "destructive",
+        title: "AI Error",
+        description: "Could not suggest a schema. Please try again.",
+      });
     } finally {
       setIsSchemaLoading(false);
     }

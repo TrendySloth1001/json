@@ -12,7 +12,7 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
 import {googleAI} from '@genkit-ai/google-genai';
 
 const SuggestJSONSchemaInputSchema = z.object({
@@ -52,12 +52,12 @@ const suggestJSONSchemaPrompt = ai.definePrompt({
   The suggested schema should include appropriate type annotations and descriptions for each field to ensure clarity and maintainability.
 
   JSON String:
-  {{jsonString}}
+  {{{jsonString}}}
 
   Ensure the generated schema is a valid Zod schema and can be used for validating similar JSON structures.
   Return only the Zod schema.
   `,
-  model: googleAI.model('gemini-1.5-pro'),
+  model: googleAI.model('gemini-1.5-pro-latest'),
 });
 
 const suggestJSONSchemaFlow = ai.defineFlow(
