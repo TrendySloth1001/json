@@ -57,7 +57,7 @@ const suggestJSONSchemaPrompt = ai.definePrompt({
   Ensure the generated schema is a valid Zod schema and can be used for validating similar JSON structures.
   Return only the Zod schema.
   `,
-  model: googleAI.model('gemini-1.5-flash'),
+  model: googleAI.model('gemini-1.5-pro'),
 });
 
 const suggestJSONSchemaFlow = ai.defineFlow(
