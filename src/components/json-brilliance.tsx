@@ -38,22 +38,15 @@ export function JsonBrilliance() {
   const [prettifiedJson, setPrettifiedJson] = useState('');
   const [minifiedJson, setMinifiedJson] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [theme, setTheme] = useState('light');
   const [activeTab, setActiveTab] = useState('prettified');
   const [suggestedSchema, setSuggestedSchema] = useState('');
   const [isSchemaLoading, setIsSchemaLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem('json-brilliance-theme') || 'light';
-    setTheme(storedTheme);
-  }, []);
-
-  useEffect(() => {
     document.documentElement.classList.remove('light', 'theme-anime');
-    document.documentElement.classList.add(theme);
-    localStorage.setItem('json-brilliance-theme', theme);
-  }, [theme]);
+    document.documentElement.classList.add('light');
+  }, []);
   
   const parsedJson = useMemo(() => {
     try {
@@ -120,7 +113,7 @@ export function JsonBrilliance() {
 
   return (
     <div className="flex flex-col h-screen w-screen bg-background text-foreground font-sans">
-      <AppHeader theme={theme} setTheme={setTheme} />
+      <AppHeader />
       <ResizablePanelGroup direction="horizontal" className="flex-grow">
         <ResizablePanel defaultSize={50}>
           <div className="flex flex-col h-full p-4 gap-4">
