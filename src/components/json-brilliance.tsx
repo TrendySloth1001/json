@@ -8,9 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import { JsonSyntaxHighlighter } from './json-syntax-highlighter';
 import { AppHeader } from './app-header';
-import { AlertCircle, Loader2, Copy, Wand2, ArrowRightLeft, Shrink } from 'lucide-react';
-import { suggestJSONSchema } from '@/ai/flows/suggest-json-schema';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { AlertCircle, Copy, ArrowRightLeft, Shrink } from 'lucide-react';
+import { Card } from './ui/card';
 import { useToast } from '@/hooks/use-toast';
 
 const initialJson = `{
@@ -21,9 +20,7 @@ const initialJson = `{
     "Prettify JSON",
     "Minify JSON",
     "Syntax Highlighting",
-    "Error Detection",
-    "Theme Switcher",
-    "AI Schema Suggester"
+    "Error Detection"
   ],
   "isAwesome": true,
   "rating": null,
@@ -39,8 +36,6 @@ export function JsonBrilliance() {
   const [minifiedJson, setMinifiedJson] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('prettified');
-  const [suggestedSchema, setSuggestedSchema] = useState('');
-  const [isSchemaLoading, setIsSchemaLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -82,33 +77,6 @@ export function JsonBrilliance() {
     }
   };
 
-  const handleSuggestSchema = async () => {
-    if (!parsedJson) {
-      toast({
-        variant: "destructive",
-        title: "Invalid JSON",
-        description: "Please fix the errors in your JSON before suggesting a schema.",
-      });
-      return;
-    }
-    setIsSchemaLoading(true);
-    setSuggestedSchema('');
-    try {
-      const result = await suggestJSONSchema({ jsonString: rawJson });
-      setSuggestedSchema(result.suggestedSchema);
-      setActiveTab('schema');
-    } catch (e: any) {
-      setError(e.message);
-       toast({
-        variant: "destructive",
-        title: "AI Error",
-        description: "Could not suggest a schema. Please try again.",
-      });
-    } finally {
-      setIsSchemaLoading(false);
-    }
-  };
-
   const handleCopy = (text: string, type: string) => {
     navigator.clipboard.writeText(text);
     toast({
@@ -128,10 +96,6 @@ export function JsonBrilliance() {
               <div className="flex gap-2">
                 <Button onClick={handlePrettify} variant="outline" size="sm"><ArrowRightLeft/>Prettify</Button>
                 <Button onClick={handleMinify} variant="outline" size="sm"><Shrink/>Minify</Button>
-                <Button onClick={handleSuggestSchema} variant="outline" size="sm" disabled={isSchemaLoading}>
-                  {isSchemaLoading ? <Loader2 className="animate-spin" /> : <Wand2 />}
-                  Suggest Schema
-                </Button>
               </div>
             </div>
             <Textarea
@@ -157,7 +121,6 @@ export function JsonBrilliance() {
               <TabsList className="shrink-0">
                 <TabsTrigger value="prettified">Prettified</TabsTrigger>
                 <TabsTrigger value="minified">Minified</TabsTrigger>
-                <TabsTrigger value="schema">Schema</TabsTrigger>
               </TabsList>
               <TabsContent value="prettified" className="flex-grow relative mt-2">
                 <Card className="h-full overflow-auto">
@@ -190,30 +153,6 @@ export function JsonBrilliance() {
                     className="h-full w-full resize-none font-mono text-sm border-0 focus-visible:ring-0"
                     aria-label="Minified JSON output"
                   />
-                </Card>
-              </TabsContent>
-              <TabsContent value="schema" className="flex-grow relative mt-2">
-                <Card className="h-full overflow-auto">
-                   <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute top-2 right-2 h-7 w-7"
-                      onClick={() => handleCopy(suggestedSchema, 'Schema')}
-                      disabled={!suggestedSchema || isSchemaLoading}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                  {isSchemaLoading ? (
-                    <div className="flex items-center justify-center h-full">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    </div>
-                  ) : suggestedSchema ? (
-                     <pre className="p-4 text-sm font-mono"><code className="font-code">{suggestedSchema}</code></pre>
-                  ) : (
-                    <div className="flex items-center justify-center h-full text-muted-foreground">
-                      <p>Click 'Suggest Schema' to generate a Zod schema for your JSON.</p>
-                    </div>
-                  )}
                 </Card>
               </TabsContent>
             </Tabs>
