@@ -102,5 +102,10 @@ export default {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    function ({ addVariant }) {
+      addVariant('theme-anime', '.theme-anime &');
+    },
+  ],
 } satisfies Config;
